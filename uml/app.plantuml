@@ -1,0 +1,71 @@
+@startuml
+
+interface Decoder
+
+Decoder : numpy.array decode()
+
+class TextDecoder implements Decoder
+
+class TextFileDecoder extends TextDecoder
+
+
+interface Detector
+
+Detector : float: score(invader: Decoder, shingle: Shingle)
+
+class SimpleDetector implements Detector
+
+class Shingle {
+        Tuple[int, int] : row_index_range
+        Tuple[int, int] col_index_range
+        numpy.array : contents
+        Any : empty_value
+}
+
+interface Renderer
+
+Renderer : render(screen: Decoder, detections: List[numpy.array])
+
+class StandardOutputRenderer implements Renderer
+
+class Tracker
+
+Tracker : List[numpy.array] track_invaders()
+
+class App
+
+App : run()
+
+App --* Tracker
+App --* Renderer
+
+Tracker --* "many" Decoder
+Tracker --* Detector
+Tracker --* "many" Shingle
+
+note top of App
+The main app called by the CLI.
+end note
+
+note top of Renderer
+Renders the detections. At the moment we only render to the standard output,
+but we may create different renderers (e.g. we may render the output to an image file).
+end note
+
+note top of Decoder
+Decoders are used to represent the screen and invaders. At the moment we only can
+represent screens and invaders from pure text and text files, but we may create
+different decoders (e.g., we may decode screens and invaders from image files).
+end note
+
+note top of Detector
+Detectors, compare shingles and invaders for similarity. At the moment we only have a simple detector that
+scores the similarity based on numpy.array overlap.
+end note
+
+note top of Shingle
+Shingles represent sliding windows with the same dimensions of the invaders to be detected.
+We slide through the scanning area one column and row at the time to extract all possible shingles.
+end note
+
+@enduml
