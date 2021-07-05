@@ -1,17 +1,17 @@
 @startuml
 
-interface Decoder
+interface Representation
 
-Decoder : numpy.array decode()
+Representation : numpy.array value()
 
-class TextDecoder implements Decoder
+class TextRepresentation implements Representation
 
-class TextFileDecoder extends TextDecoder
+class TextFileRepresentation extends TextRepresentation
 
 
 interface Detector
 
-Detector : float: score(invader: Decoder, shingle: Shingle)
+Detector : float: score(invader: Representation, shingle: Shingle)
 
 class SimpleDetector implements Detector
 
@@ -24,13 +24,13 @@ class Shingle {
 
 interface Renderer
 
-Renderer : render(screen: Decoder, detections: List[numpy.array])
+Renderer : render(screen: Representation, detections: List[numpy.array])
 
 class StandardOutputRenderer implements Renderer
 
 class Tracker
 
-Tracker : List[numpy.array] track_invaders()
+Tracker : List[numpy.array] get_detection_masks(invaders: List[Representation])
 
 class App
 
@@ -39,8 +39,10 @@ App : run()
 App --* Tracker
 App --* Renderer
 
-Tracker --* "many" Decoder
+Tracker --* "many" Representation
 Tracker --* Detector
 Tracker --* "many" Shingle
+
+Renderer --* Representation
 
 @enduml
